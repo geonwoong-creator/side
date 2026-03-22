@@ -1,7 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 import FinanceDataReader as fdr
 from apscheduler.triggers.cron import CronTrigger # 크론 트리거 추가
-from database import supabase
+from core.database import supabase
 
 def update_stock_prices():
     print("🔄 [Scheduler] 시세 업데이트 시작...")

@@ -1,15 +1,7 @@
 import FinanceDataReader as fdr
-from supabase import create_client
 import pandas as pd
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
-
-# 1. Supabase 연결 정보 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+from core.database import supabase
 
 def init_stock_master():
     print("🚀 국내 주식 종목 리스트를 가져오는 중...")
