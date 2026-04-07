@@ -3,8 +3,9 @@ import secrets
 from fastapi import APIRouter, HTTPException
 
 from core.database import supabase
-from models.schemas import GroupCreate
-from models.schemas import ProfileUpdate
+from models.schemas import GroupCreate, PostCreate, ProfileUpdate
+from services import post_logic
+
 router = APIRouter()
 
 
@@ -58,6 +59,46 @@ async def update_profile(item: ProfileUpdate):
         "nickname": item.nickname
     }).execute()
     return {"status": "success", "nickname": item.nickname}
+
+
+@router.post("/{group_id}/posts")
+async def add_hedge_post(group_id: str, item: PostCreate):
+    try:
+        post = post_logic.create_group_post(
+            user_id=item.user_id,
+            group_id=group_id,
+            ticker_symbol=item.ticker_symbol,
+            target_price=item.target_price,
+            prediction_type=item.prediction_type,
+            target_date=item.target_date
+        )
+        return {"status": "success", "message": "박제 성공!", "data": post}
+    except ValueError as e:
+        raise HTTPException(status_code=403, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/{group_id}/posts")
+async def list_group_posts(group_id: str):
+    try:
+        posts = post_logic.get_group_posts(group_id)
+        return {"status": "success", "data": posts}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/{group_id}/posts/{post_id}")
+async def post_detail(group_id: str, post_id: str):
+    try:
+        post = post_logic.get_post_detail(post_id)
+        if not post:
+            raise HTTPException(status_code=404, detail="게시글을 찾을 수 없습니다.")
+        if str(post["group_id"]) != group_id:
+             raise HTTPException(status_code=403, detail="다른 그룹의 게시글입니다.")
+        return {"status": "success", "data": post}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{group_id}/ranking")

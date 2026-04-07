@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from models.schemas import StockCreate
+from models.schemas import StockCreate, StockUpdate
 from services import stock_logic
 
 router = APIRouter()
@@ -27,6 +27,32 @@ async def add_to_portfolio(item: StockCreate):
         raise HTTPException(status_code=404, detail=str(e)) from e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
+
+@router.delete("/remove/{item_id}")
+async def remove_stock(item_id: str):
+    try:
+        # portfolios 테이블에서 해당 id를 가진 행을 삭제
+        res = stock_logic.delete_portfolio_row(item_id)
+        
+        if not res.data:
+            raise HTTPException(status_code=404, detail="삭제할 항목을 찾을 수 없습니다.")
+            
+        return {"status": "success", "message": "포트폴리오에서 삭제되었습니다."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/update/{item_id}")
+async def update_stock(item_id: str, item: StockUpdate):
+    try:
+        res = stock_logic.update_portfolio_row(item_id, item.avg_price, item.quantity)
+        
+        if not res.data:
+            raise HTTPException(status_code=404, detail="수정할 항목을 찾을 수 없습니다.")
+            
+        return {"status": "success", "message": "성공적으로 수정되었습니다.", "data": res.data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/summary/{user_id}")

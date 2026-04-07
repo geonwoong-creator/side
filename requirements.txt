@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+finance-datareader
+apscheduler
+pandas
+supabase
+python-dotenv

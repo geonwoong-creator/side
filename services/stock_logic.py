@@ -1,3 +1,5 @@
+from typing import Optional
+
 import FinanceDataReader as fdr
 
 from core.database import supabase
@@ -26,6 +28,28 @@ def insert_portfolio_row(
         "quantity": quantity,
     }
     return supabase.table("portfolios").insert(portfolio_data).execute()
+
+
+def update_portfolio_row(
+    item_id: str, avg_price: Optional[float] = None, quantity: Optional[int] = None
+):
+    update_data = {}
+    if avg_price is not None:
+        update_data["avg_price"] = avg_price
+    if quantity is not None:
+        update_data["quantity"] = quantity
+
+    if not update_data:
+        # Nothing to update, but we should still return the existing record if it exists
+        return supabase.table("portfolios").select("*").eq("id", item_id).execute()
+
+    return (
+        supabase.table("portfolios").update(update_data).eq("id", item_id).execute()
+    )
+
+
+def delete_portfolio_row(item_id: str):
+    return supabase.table("portfolios").delete().eq("id", item_id).execute()
 
 
 def get_portfolio_summary_for_user(user_id: str) -> dict:
