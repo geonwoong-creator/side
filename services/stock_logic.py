@@ -89,3 +89,19 @@ def get_portfolio_summary_for_user(user_id: str) -> dict:
         },
         "holdings": items,
     }
+
+
+def search_stocks(query: str, limit: int = 10):
+    q = (query or "").strip()
+    if not q:
+        return []
+
+    pattern = f"%{q}%"
+    res = (
+        supabase.table("stocks")
+        .select("*")
+        .or_(f"name.ilike.{pattern},ticker_symbol.ilike.{pattern}")
+        .limit(limit)
+        .execute()
+    )
+    return res.data

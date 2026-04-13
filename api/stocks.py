@@ -64,3 +64,10 @@ async def get_portfolio_summary(user_id: str):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
+
+@router.get("/search")
+async def search_stocks(query: str):
+    try:
+        return stock_logic.search_stocks(query=query, limit=20)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
