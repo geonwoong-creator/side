@@ -1,0 +1,371 @@
+.main {
+  width: 1200px;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.loader {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--foreground);
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.predictBtn {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  border: none;
+  color: #0B0F19;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
+}
+
+.predictBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(0, 242, 254, 0.4);
+}
+
+.error {
+  background: rgba(255, 23, 68, 0.1);
+  border: 1px solid rgba(255, 23, 68, 0.2);
+  color: #FF5252;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+.contentLayout {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.card {
+  padding: 30px !important;
+  min-height: 500px;
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--foreground);
+  margin: 0 0 24px 0;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 12px;
+}
+
+.subLoader {
+  padding: 80px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* 1. Ranking list */
+.rankingSection {
+  height: 100%;
+}
+
+.rankingList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rankingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--glass-border);
+  transition: all 0.2s ease;
+}
+
+.rankInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rankNumber {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--glass-border);
+}
+
+.nickname {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.rankScore {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.yieldText {
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+.totalValue {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Gold, Silver, Bronze Ranking Highlight */
+.rankGold {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.06), rgba(255, 140, 0, 0.06));
+  border-color: rgba(255, 215, 0, 0.2);
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.05);
+}
+.rankGold .rankNumber {
+  background: #FFD700;
+  color: #0B0F19;
+  border-color: #FFD700;
+}
+
+.rankSilver {
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.06), rgba(169, 169, 169, 0.06));
+  border-color: rgba(192, 192, 192, 0.2);
+}
+.rankSilver .rankNumber {
+  background: #C0C0C0;
+  color: #0B0F19;
+  border-color: #C0C0C0;
+}
+
+.rankBronze {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.06), rgba(139, 69, 19, 0.06));
+  border-color: rgba(205, 127, 50, 0.2);
+}
+.rankBronze .rankNumber {
+  background: #CD7F32;
+  color: #0B0F19;
+  border-color: #CD7F32;
+}
+
+.plusColor {
+  color: var(--yield-up);
+}
+
+.minusColor {
+  color: var(--yield-down);
+}
+
+.emptyText {
+  padding: 40px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* 2. Timeline posts */
+.postsSection {
+  height: 100%;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 20px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 5px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.timelineItem {
+  position: relative;
+  padding-bottom: 24px;
+}
+
+.timelineItem:last-child {
+  padding-bottom: 0;
+}
+
+.timelineMarker {
+  position: absolute;
+  top: 24px;
+  left: -20px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--background);
+  z-index: 2;
+  transform: translateX(-50%);
+}
+
+.timelineCard {
+  padding: 20px !important;
+  border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+.postHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.postAuthor {
+  font-size: 0.95rem;
+}
+
+.statusBadge {
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.statusPending {
+  background: rgba(0, 242, 254, 0.08);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  color: var(--color-primary);
+}
+
+.statusSuccess {
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+  color: var(--yield-up);
+}
+
+.statusFailed {
+  background: rgba(255, 23, 68, 0.1);
+  border: 1px solid rgba(255, 23, 68, 0.2);
+  color: var(--yield-down);
+}
+
+.stockTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px 0;
+}
+
+.predictionBadge {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.badgeRise {
+  background: rgba(0, 230, 118, 0.08);
+  color: var(--yield-up);
+}
+
+.badgeFall {
+  background: rgba(255, 23, 68, 0.08);
+  color: var(--yield-down);
+}
+
+.priceInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--glass-border);
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.priceInfoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.priceLabel {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.priceVal {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.emptyTimelineContainer {
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.emptyTimelineIcon {
+  font-size: 3.5rem;
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.emptyTimelineContainer p {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.emptyTimelineHint {
+  font-size: 0.85rem !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-weight: 500 !important;
+}
+
+@media (max-width: 900px) {
+  .contentLayout {
+    grid-template-columns: 1fr;
+  }
+}

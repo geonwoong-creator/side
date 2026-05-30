@@ -1,0 +1,278 @@
+.main {
+  width: 1200px;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.loader {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--foreground);
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.addBtn {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  border: none;
+  color: #0B0F19;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
+}
+
+.addBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(0, 242, 254, 0.4);
+}
+
+.error {
+  background: rgba(255, 23, 68, 0.1);
+  border: 1px solid rgba(255, 23, 68, 0.2);
+  color: #FF5252;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+/* 1. Summary Cards */
+.summaryCard {
+  padding: 30px !important;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--foreground);
+}
+
+.yieldValue {
+  font-size: 1.5rem;
+  font-weight: 900;
+  padding: 4px 12px;
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.plusColor {
+  color: var(--yield-up) !important;
+  text-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+}
+
+.minusColor {
+  color: var(--yield-down) !important;
+  text-shadow: 0 0 10px rgba(255, 23, 68, 0.2);
+}
+
+.plusBg {
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+  color: var(--yield-up);
+}
+
+.minusBg {
+  background: rgba(255, 23, 68, 0.1);
+  border: 1px solid rgba(255, 23, 68, 0.2);
+  color: var(--yield-down);
+}
+
+/* 2. Holdings Table */
+.tableCard {
+  padding: 30px !important;
+}
+
+.tableTitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 24px 0;
+  color: var(--foreground);
+}
+
+.tableLoader {
+  padding: 40px;
+  text-align: center;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.table th {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px 20px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.stockNameTd {
+  color: var(--foreground);
+}
+
+.stockNameTd strong {
+  font-size: 1rem;
+}
+
+.tickerTd {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+}
+
+.itemYieldBadge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.plusBadge {
+  background: rgba(0, 230, 118, 0.08);
+  border: 1px solid rgba(0, 230, 118, 0.2);
+}
+
+.minusBadge {
+  background: rgba(255, 23, 68, 0.08);
+  border: 1px solid rgba(255, 23, 68, 0.2);
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  opacity: 0.6;
+}
+
+.deleteBtn:hover {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+/* Empty State */
+.emptyContainer {
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  opacity: 0.8;
+  animation: float 3s ease-in-out infinite;
+}
+
+.emptyContainer p {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.emptyHint {
+  font-size: 0.9rem !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-weight: 500 !important;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+@media (max-width: 900px) {
+  .summaryGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .addBtn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0B0F19;
+  --foreground: #F3F4F6;
+  
+  /* Brand Neon Colors */
+  --color-primary: #00F2FE;
+  --color-secondary: #4FACFE;
+  --color-accent: #8A2BE2;
+  
+  /* Yield Colors (Neon) */
+  --yield-up: #00E676;
+  --yield-down: #FF1744;
+  
+  /* Glassmorphism Styles */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-bg-hover: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-shadow: rgba(0, 0, 0, 0.4);
+  --glass-blur: 16px;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-outfit), var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(0, 242, 254, 0.06) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(138, 43, 226, 0.06) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(11, 15, 25, 0.8);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

@@ -13,9 +13,22 @@ def fetch_current_price(ticker_symbol: str) -> int:
 
 
 def sync_stock_current_price(ticker_symbol: str, current_price: int) -> None:
-    supabase.table("stocks").update(
-        {"current_price": current_price, "last_updated": "now()"}
-    ).eq("ticker_symbol", ticker_symbol).execute()
+    # stocks 테이블에 이미 종목이 존재하는지 먼저 확인 (FK 에러 방지)
+    stock_exists = supabase.table("stocks").select("ticker_symbol").eq("ticker_symbol", ticker_symbol).execute()
+    
+    if not stock_exists.data:
+        # 존재하지 않는 신규 종목이라면, 임의의 이름과 함께 삽입하여 FK 제약 에러를 방지합니다.
+        supabase.table("stocks").insert({
+            "ticker_symbol": ticker_symbol,
+            "name": f"신규종목({ticker_symbol})",
+            "current_price": current_price,
+            "last_updated": "now()"
+        }).execute()
+    else:
+        # 이미 존재한다면, 최신 시세와 업데이트 시각만 수정합니다.
+        supabase.table("stocks").update(
+            {"current_price": current_price, "last_updated": "now()"}
+        ).eq("ticker_symbol", ticker_symbol).execute()
 
 
 def insert_portfolio_row(
@@ -69,7 +82,10 @@ def get_portfolio_summary_for_user(user_id: str) -> dict:
     for item in items:
         avg_price = item["avg_price"]
         quantity = item["quantity"]
-        current_price = item["stocks"]["current_price"] or 0
+        
+        # stocks 정보가 없거나 조인 결과가 None인 경우를 처리하여 NoneType 에러를 미연에 방지합니다.
+        stocks_info = item.get("stocks")
+        current_price = stocks_info.get("current_price") if (stocks_info and stocks_info.get("current_price") is not None) else 0
 
         total_purchase_amount += avg_price * quantity
         total_current_value += current_price * quantity

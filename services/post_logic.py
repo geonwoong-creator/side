@@ -41,8 +41,8 @@ def get_group_posts(group_id: str):
     res = supabase.table("group_posts") \
         .select("*, profiles(nickname)") \
         .eq("group_id", group_id) \
-        .order("status", descending=True) \
-        .order("created_at", descending=True) \
+        .order("status", desc=True) \
+        .order("created_at", desc=True) \
         .execute()
     return res.data
 
