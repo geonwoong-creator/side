@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      # 브라우저(클라이언트)에서 백엔드로 바로 통신해야 하므로,
+      # 클라우드플레어 터널 도메인을 사용할 경우 'http://localhost:8000' 대신 
+      # 실제 백엔드가 배포될 도메인 주소(예: 'https://api.yourdomain.com')를 적어주셔야 합니다.
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    restart: always
+
+  # Cloudflare Zero Trust 콘솔에서 터널 생성 후 발급받은 
+  # 'CLOUDFLARE_TUNNEL_TOKEN' 환경 변수를 기입하면 동작합니다.
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    restart: always
+    depends_on:
+      - frontend
+      - backend
