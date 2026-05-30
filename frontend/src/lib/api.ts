@@ -137,18 +137,21 @@ export interface GroupPost {
   group_id: string;
   user_id: string;
   ticker_symbol: string;
+  stock_name?: string;
   target_price: number;
   entry_price: number;
   prediction_type: "RISE" | "FALL";
   target_date: string;
   status: "pending" | "success" | "failed";
   created_at: string;
+  description?: string;
   profiles?: {
     nickname: string | null;
   } | null;
 }
 
 export interface GroupRankingItem {
+  user_id: string;
   nickname: string;
   yield: number;
   total_value: number;
@@ -189,7 +192,8 @@ export const groupsApi = {
     tickerSymbol: string,
     targetPrice: number,
     predictionType: "RISE" | "FALL",
-    targetDate: string
+    targetDate: string,
+    description?: string
   ) =>
     request<{ status: string; message: string; data: GroupPost }>(`/groups/${groupId}/posts`, {
       method: "POST",
@@ -199,6 +203,7 @@ export const groupsApi = {
         target_price: targetPrice,
         prediction_type: predictionType,
         target_date: targetDate,
+        description: description,
       }),
     }),
 

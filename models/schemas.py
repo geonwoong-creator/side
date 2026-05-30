@@ -36,6 +36,7 @@ class PostCreate(BaseModel):
     target_price: int
     prediction_type: str  # "RISE" or "FALL"
     target_date: str      # "YYYY-MM-DD"
+    description: Optional[str] = None
 
 class ProfileUpdate(BaseModel):
     user_id: str

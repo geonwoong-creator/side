@@ -15,13 +15,15 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=https://api.wmtdev-ai.com
     ports:
       - "3000:3000"
     environment:
       # 브라우저(클라이언트)에서 백엔드로 바로 통신해야 하므로,
       # 클라우드플레어 터널 도메인을 사용할 경우 'http://localhost:8000' 대신 
       # 실제 백엔드가 배포될 도메인 주소(예: 'https://api.yourdomain.com')를 적어주셔야 합니다.
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_URL=https://api.wmtdev-ai.com
     restart: always
 
   # Cloudflare Zero Trust 콘솔에서 터널 생성 후 발급받은 

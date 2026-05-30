@@ -34,6 +34,33 @@ def sync_stock_current_price(ticker_symbol: str, current_price: int) -> None:
 def insert_portfolio_row(
     user_id: str, ticker_symbol: str, avg_price: float, quantity: int
 ):
+    # 동일 유저의 동일 종목 보유 현황이 이미 존재한다면, 평단가 및 수량 가중 평균 조율 처리
+    existing = (
+        supabase.table("portfolios")
+        .select("id", "avg_price", "quantity")
+        .eq("user_id", user_id)
+        .eq("ticker_symbol", ticker_symbol)
+        .execute()
+    )
+
+    if existing.data:
+        row = existing.data[0]
+        row_id = row["id"]
+        old_avg = row["avg_price"]
+        old_qty = row["quantity"]
+
+        new_qty = old_qty + quantity
+        # 0 나누기 방어코드
+        if new_qty > 0:
+            new_avg = (old_avg * old_qty + avg_price * quantity) / new_qty
+        else:
+            new_avg = 0.0
+
+        return supabase.table("portfolios").update({
+            "avg_price": new_avg,
+            "quantity": new_qty
+        }).eq("id", row_id).execute()
+
     portfolio_data = {
         "user_id": user_id,
         "ticker_symbol": ticker_symbol,
@@ -44,7 +71,7 @@ def insert_portfolio_row(
 
 
 def update_portfolio_row(
-    item_id: str, avg_price: Optional[float] = None, quantity: Optional[int] = None
+    item_id: str, avg_price: Optional[float] = None, quantity: Optional[int] = None, user_id: Optional[str] = None
 ):
     update_data = {}
     if avg_price is not None:
@@ -52,17 +79,49 @@ def update_portfolio_row(
     if quantity is not None:
         update_data["quantity"] = quantity
 
+    query = supabase.table("portfolios")
     if not update_data:
         # Nothing to update, but we should still return the existing record if it exists
-        return supabase.table("portfolios").select("*").eq("id", item_id).execute()
+        q = query.select("*").eq("id", item_id)
+        if user_id:
+            q = q.eq("user_id", user_id)
+        return q.execute()
 
-    return (
-        supabase.table("portfolios").update(update_data).eq("id", item_id).execute()
+    q = query.update(update_data).eq("id", item_id)
+    if user_id:
+        q = q.eq("user_id", user_id)
+    return q.execute()
+
+
+def delete_portfolio_row(item_id: str, user_id: Optional[str] = None):
+    query = supabase.table("portfolios").delete().eq("id", item_id)
+    if user_id:
+        query = query.eq("user_id", user_id)
+    return query.execute()
+
+
+def check_share_group(user_a: str, user_b: str) -> bool:
+    """두 사용자가 최소 한 개 이상의 동일한 그룹 모임에 가입되어 있는지 검증합니다."""
+    if user_a == user_b:
+        return True
+
+    # 1단계: user_a가 가입한 그룹 ID 리스트 추출
+    res_a = supabase.table("group_members").select("group_id").eq("user_id", user_a).execute()
+    if not res_a.data:
+        return False
+
+    group_ids_a = [g["group_id"] for g in res_a.data]
+
+    # 2단계: 그 그룹 ID들 중 user_b가 소속된 행이 단 한 개라도 있는지 조회
+    res_b = (
+        supabase.table("group_members")
+        .select("group_id")
+        .in_("group_id", group_ids_a)
+        .eq("user_id", user_b)
+        .execute()
     )
 
-
-def delete_portfolio_row(item_id: str):
-    return supabase.table("portfolios").delete().eq("id", item_id).execute()
+    return len(res_b.data) > 0
 
 
 def get_portfolio_summary_for_user(user_id: str) -> dict:

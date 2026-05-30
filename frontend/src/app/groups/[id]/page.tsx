@@ -7,6 +7,8 @@ import { groupsApi, GroupRankingItem, GroupPost } from "../../../lib/api";
 import Navbar from "../../../components/Navbar/Navbar";
 import GlassCard from "../../../components/GlassCard/GlassCard";
 import PredictionModal from "../../../components/Modal/PredictionModal";
+import MemberPortfolioModal from "../../../components/Modal/MemberPortfolioModal";
+import PredictionDetailModal from "../../../components/Modal/PredictionDetailModal";
 import styles from "./groupDetail.module.css";
 
 export default function GroupDetail() {
@@ -19,7 +21,18 @@ export default function GroupDetail() {
   const [posts, setPosts] = useState<GroupPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [isPredictionOpen, setIsPredictionOpen] = useState(false);
+  const [isMemberPortfolioOpen, setIsMemberPortfolioOpen] = useState(false);
+  const [selectedMemberId, setSelectedMemberId] = useState("");
+  const [selectedMemberNickname, setSelectedMemberNickname] = useState("");
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<GroupPost | null>(null);
   const [error, setError] = useState("");
+
+  const handleMemberClick = (userId: string, nickname: string) => {
+    setSelectedMemberId(userId);
+    setSelectedMemberNickname(nickname);
+    setIsMemberPortfolioOpen(true);
+  };
 
   const fetchGroupData = useCallback(async () => {
     if (!groupId) return;
@@ -89,10 +102,16 @@ export default function GroupDetail() {
                     else if (rankNum === 3) rankBadge = styles.rankBronze;
 
                     return (
-                      <div key={idx} className={`${styles.rankingItem} ${rankBadge}`}>
+                      <div
+                        key={idx}
+                        className={`${styles.rankingItem} ${rankBadge}`}
+                        onClick={() => handleMemberClick(item.user_id, item.nickname)}
+                        style={{ cursor: "pointer" }}
+                        title={`${item.nickname} 님의 포트폴리오 보기`}
+                      >
                         <div className={styles.rankInfo}>
                           <span className={styles.rankNumber}>{rankNum}</span>
-                          <span className={styles.nickname}>{item.nickname}</span>
+                          <span className={styles.nickname} style={{ textDecoration: "underline", textDecorationStyle: "dotted" }}>{item.nickname}</span>
                         </div>
                         <div className={styles.rankScore}>
                           <span
@@ -142,9 +161,27 @@ export default function GroupDetail() {
                     return (
                       <div key={post.id} className={styles.timelineItem}>
                         <div className={styles.timelineMarker}></div>
-                        <GlassCard className={styles.timelineCard}>
+                        <GlassCard
+                          className={styles.timelineCard}
+                          onClick={() => {
+                            setSelectedPost(post);
+                            setIsDetailOpen(true);
+                          }}
+                          style={{ cursor: "pointer" }}
+                          title="예측 상세 이유 및 정보 보기"
+                        >
                           <div className={styles.postHeader}>
-                            <span className={styles.postAuthor}>🔥 <strong>{nickname}</strong></span>
+                            <span
+                              className={styles.postAuthor}
+                              onClick={(e) => {
+                                e.stopPropagation(); // 카드 전체 클릭 이벤트 방지
+                                handleMemberClick(post.user_id, nickname);
+                              }}
+                              style={{ cursor: "pointer" }}
+                              title={`${nickname} 님의 포트폴리오 보기`}
+                            >
+                              🔥 <strong style={{ textDecoration: "underline", textDecorationStyle: "dotted" }}>{nickname}</strong>
+                            </span>
                             <span className={`${styles.statusBadge} ${statusClass}`}>
                               {statusLabel}
                             </span>
@@ -152,7 +189,10 @@ export default function GroupDetail() {
 
                           <div className={styles.postBody}>
                             <h3 className={styles.stockTitle}>
-                              {post.ticker_symbol}
+                              {post.stock_name || post.ticker_symbol}
+                              <span style={{ fontSize: "0.85rem", color: "rgba(255, 255, 255, 0.4)", fontWeight: "normal" }}>
+                                {post.ticker_symbol}
+                              </span>
                               <span
                                 className={`${styles.predictionBadge} ${
                                   isRise ? styles.badgeRise : styles.badgeFall
@@ -202,6 +242,19 @@ export default function GroupDetail() {
         groupId={groupId}
         userId={user?.id || ""}
         onSuccess={fetchGroupData}
+      />
+
+      <MemberPortfolioModal
+        isOpen={isMemberPortfolioOpen}
+        onClose={() => setIsMemberPortfolioOpen(false)}
+        userId={selectedMemberId}
+        nickname={selectedMemberNickname}
+      />
+
+      <PredictionDetailModal
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        post={selectedPost}
       />
     </>
   );

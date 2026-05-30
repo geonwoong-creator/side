@@ -49,9 +49,35 @@ export default function SearchModal({ isOpen, onClose, userId, onSuccess }: Sear
     return () => clearTimeout(delayDebounceFn);
   }, [query]);
 
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const cleanVal = e.target.value.replace(/[^0-9]/g, "");
+    if (!cleanVal) {
+      setAvgPrice("");
+      return;
+    }
+    setAvgPrice(Number(cleanVal).toLocaleString());
+  };
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const cleanVal = e.target.value.replace(/[^0-9]/g, "");
+    if (!cleanVal) {
+      setQuantity("");
+      return;
+    }
+    setQuantity(Number(cleanVal).toLocaleString());
+  };
+
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedStock || !avgPrice || !quantity) return;
+
+    const numericPrice = parseFloat(avgPrice.replace(/,/g, ""));
+    const numericQuantity = parseInt(quantity.replace(/,/g, ""), 10);
+
+    if (isNaN(numericPrice) || numericPrice <= 0 || isNaN(numericQuantity) || numericQuantity <= 0) {
+      setError("평균 매수가와 수량은 0보다 큰 양수여야 합니다.");
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -59,8 +85,8 @@ export default function SearchModal({ isOpen, onClose, userId, onSuccess }: Sear
       await portfolioApi.addStock(
         userId,
         selectedStock.ticker_symbol,
-        parseFloat(avgPrice),
-        parseInt(quantity, 10)
+        numericPrice,
+        numericQuantity
       );
       onSuccess();
       onClose();
@@ -102,7 +128,7 @@ export default function SearchModal({ isOpen, onClose, userId, onSuccess }: Sear
                     className={styles.resultItem}
                     onClick={() => {
                       setSelectedStock(stock);
-                      setAvgPrice(stock.current_price ? stock.current_price.toString() : "");
+                      setAvgPrice(stock.current_price ? stock.current_price.toLocaleString() : "");
                     }}
                   >
                     <span className={styles.stockName}>{stock.name}</span>
@@ -132,10 +158,10 @@ export default function SearchModal({ isOpen, onClose, userId, onSuccess }: Sear
             <div className={styles.formGroup}>
               <label>평균 매수가 (₩)</label>
               <input
-                type="number"
+                type="text"
                 placeholder="평균 단가를 입력하세요"
                 value={avgPrice}
-                onChange={(e) => setAvgPrice(e.target.value)}
+                onChange={handlePriceChange}
                 required
                 className={styles.input}
               />
@@ -144,10 +170,10 @@ export default function SearchModal({ isOpen, onClose, userId, onSuccess }: Sear
             <div className={styles.formGroup}>
               <label>보유 수량</label>
               <input
-                type="number"
+                type="text"
                 placeholder="수량을 입력하세요"
                 value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
+                onChange={handleQuantityChange}
                 required
                 className={styles.input}
               />

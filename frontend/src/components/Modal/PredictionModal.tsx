@@ -26,6 +26,7 @@ export default function PredictionModal({
   const [targetPrice, setTargetPrice] = useState("");
   const [predictionType, setPredictionType] = useState<"RISE" | "FALL">("RISE");
   const [targetDate, setTargetDate] = useState("");
+  const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -37,6 +38,7 @@ export default function PredictionModal({
       setTargetPrice("");
       setPredictionType("RISE");
       setTargetDate("");
+      setDescription("");
       setError("");
     }
   }, [isOpen]);
@@ -58,9 +60,38 @@ export default function PredictionModal({
     return () => clearTimeout(delayDebounceFn);
   }, [query]);
 
+  const getLocalDateString = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const cleanVal = e.target.value.replace(/[^0-9]/g, "");
+    if (!cleanVal) {
+      setTargetPrice("");
+      return;
+    }
+    setTargetPrice(Number(cleanVal).toLocaleString());
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedStock || !targetPrice || !targetDate) return;
+
+    const numericPrice = parseFloat(targetPrice.replace(/,/g, ""));
+    if (isNaN(numericPrice) || numericPrice <= 0) {
+      setError("목표 가격은 0보다 큰 양수여야 합니다.");
+      return;
+    }
+
+    const todayStr = getLocalDateString();
+    if (targetDate < todayStr) {
+      setError("목표 만료일은 오늘 또는 미래 날짜여야 합니다.");
+      return;
+    }
 
     setLoading(true);
     setError("");
@@ -69,9 +100,10 @@ export default function PredictionModal({
         groupId,
         userId,
         selectedStock.ticker_symbol,
-        parseInt(targetPrice, 10),
+        numericPrice,
         predictionType,
-        targetDate
+        targetDate,
+        description
       );
       onSuccess();
       onClose();
@@ -113,7 +145,7 @@ export default function PredictionModal({
                     className={styles.resultItem}
                     onClick={() => {
                       setSelectedStock(stock);
-                      setTargetPrice(stock.current_price ? stock.current_price.toString() : "");
+                      setTargetPrice(stock.current_price ? stock.current_price.toLocaleString() : "");
                     }}
                   >
                     <span className={styles.stockName}>{stock.name}</span>
@@ -170,10 +202,10 @@ export default function PredictionModal({
             <div className={styles.formGroup}>
               <label>목표 가격 (₩)</label>
               <input
-                type="number"
+                type="text"
                 placeholder="목표가를 입력하세요"
                 value={targetPrice}
-                onChange={(e) => setTargetPrice(e.target.value)}
+                onChange={handlePriceChange}
                 required
                 className={styles.input}
               />
@@ -187,7 +219,18 @@ export default function PredictionModal({
                 onChange={(e) => setTargetDate(e.target.value)}
                 required
                 className={styles.input}
-                min={new Date().toISOString().split("T")[0]}
+                min={getLocalDateString()}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>예측 근거 및 사유</label>
+              <textarea
+                placeholder="왜 상승/하락할 것이라고 예측하시나요? 구체적인 비전이나 근거를 남겨 입을 꾹 닫게 하세요! (선택 사항)"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className={styles.input}
+                style={{ minHeight: "80px", resize: "vertical", fontFamily: "inherit", padding: "12px", background: "rgba(255, 255, 255, 0.02)", border: "1px solid var(--glass-border)", borderRadius: "8px", color: "var(--foreground)" }}
               />
             </div>
 
